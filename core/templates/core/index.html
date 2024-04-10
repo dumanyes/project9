@@ -1,0 +1,166 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Jañalyq</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}">
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+    <!-- Custom styles -->
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet">
+</head>
+<body>
+<!-- Responsive navbar-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#!">Jañalyq</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+{#                <li class="nav-item"><a class="nav-link" href="#">Главная</a></li>#}
+{#                <li class="nav-item"><a class="nav-link" href="#!">О нас</a></li>#}
+{#                <li class="nav-item"><a class="nav-link" href="#!">Контакты</a></li>#}
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'index' %}">Главная</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Page header with logo and tagline-->
+<header class="py-5 bg-light border-bottom mb-4">
+    <div class="container">
+        <div class="text-center">
+            <h1 class="display-4 fw-bold text-dark">Jañalyq</h1>
+            <p class="lead text-muted mb-0">Будь в курсе событий – новости с первых уст!</p>
+        </div>
+    </div>
+</header>
+<!-- Page content-->
+<div class="container">
+    <div class="row">
+        <!-- Blog entries-->
+        <div class="col-lg-8">
+            <div class="row">
+                {% for post in page_obj %}
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm border-0 h-100">
+                        <img class="card-img-top" src="{{ post.thumbnail.url }}" alt="...">
+                        <div class="card-body">
+                            <p class="small text-muted mb-2">{{ post.created|date:"M d, Y" }}</p>
+                            <h2 class="card-title h5">{{ post.title }}</h2>
+                            <p class="card-text">{{ post.summary|truncatechars:100 }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0">
+                            <a class="btn btn-primary btn-sm" href="{% url 'post_detail' post.pk %}">Читать далее <i class="fas fa-chevron-right ml-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <!-- Pagination-->
+            <nav aria-label="Pagination" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">Новее</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">← Предыдущая</a></li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Следующая →</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Старее</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        <!-- Sidebar widgets-->
+        <div class="col-lg-4">
+            <!-- Search widget-->
+            <div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">Поиск</h5>
+        <form class="input-group" action="{% url 'search_results' %}" method="get">
+            <input class="form-control" type="text" name="q" placeholder="Введите поисковый запрос..." aria-label="Введите поисковый запрос..." aria-describedby="button-search">
+            <button class="btn btn-primary" id="button-search" type="submit"><i class="fas fa-search"></i></button>
+        </form>
+    </div>
+</div>
+
+            <!-- Categories widget-->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Категории</h5>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <ul class="list-unstyled mb-0">
+                                <li><a href="{% url 'politics' %}">Политика</a></li>
+                                <li><a href="{% url 'business' %}">Бизнес и экономика</a></li>
+                                <li><a href="{% url 'culture' %}">Культура</a></li>
+                                <li><a href="{% url 'technology' %}">Технологии</a></li>
+                                <li><a href="{% url 'sports' %}">Спорт</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-6">
+                            <ul class="list-unstyled mb-0">
+                                <li><a href="{% url 'education' %}">Образование</a></li>
+                                <li><a href="{% url 'environment' %}">Окружающая среда</a></li>
+                                <li><a href="{% url 'travel' %}">Путешествия и туризм</a></li>
+                                <li><a href="{% url 'local_news' %}">Местные новости</a></li>
+                                <li><a href="{% url 'international_news' %}">Международные новости</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+           <!-- Sorting buttons -->
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">Сортировка</h5>
+        <div class="d-grid gap-2">
+            <a href="{% url 'sort_newest' %}" class="btn btn-primary">Сначала новые</a>
+            <a href="{% url 'sort_oldest' %}" class="btn btn-primary">Сначала старые</a>
+        </div>
+    </div>
+</div>
+
+            <!-- Side widget-->
+{#            <div class="card mb-4">#}
+{#                <div class="card-body">#}
+{#                    <h5 class="card-title mb-3">Боковой виджет</h5>#}
+{#                    <p class="card-text">Вы можете разместить здесь любую информацию. Эти виджеты легко использовать и включают компонент Bootstrap 5!</p>#}
+{#                </div>#}
+{#            </div>#}
+        </div>
+    </div>
+</div>
+<!-- Footer-->
+<footer class="py-5 bg-dark">
+    <div class="container">
+        <p class="m-0 text-center text-white">Jañalyq 2024</p>
+    </div>
+</footer>
+<!-- Bootstrap core JS-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<!-- Font Awesome icons -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js"></script>
+<!-- Core theme JS-->
+<script src="{% static 'js/scripts.js' %}"></script>
+</body>
+</html>
